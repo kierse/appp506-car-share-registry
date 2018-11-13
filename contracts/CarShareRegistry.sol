@@ -74,6 +74,19 @@ contract CarShareRegistry {
          **/
     }
     
+    function unlockCar(string vin, address renter) public (bool) {
+        /**
+         * This method is called by the Car
+         * 
+         *  1) Retrieve the Car struct using the indicated vin
+         *   1a) Return false if the vin does NOT map to a Car struct
+         *  2) Verify that the indicated renter has rented the Car
+         *   2a) Return false if the renter has not rented the Car
+         *  3) return true
+         * 
+         **/
+    }
+    
     function returnCar(string vin) public { /* TODO */ }
     
     /**
