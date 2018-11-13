@@ -22,6 +22,9 @@ contract CarShareRegistry {
     
     // vin => Car
     mapping(string => Car) private cars;
+    
+    // vin => rental_total
+    mapping(string => uint8) private pendingTransactions;
 
     // open CarFeedback reports
     // vin => CarFeedback[]
@@ -47,7 +50,8 @@ contract CarShareRegistry {
          *  5) Set Car.state = RENTED
          *  6) Transfer funds from renter to contract
          *   6a) Throw exception if transfer fails
-         *  7) return vin 
+         *  7) Add new entry to pendingTransactions mapping using vin and totalCost
+         *  8) return vin 
          * 
          **/
     }
@@ -61,9 +65,9 @@ contract CarShareRegistry {
          *  1) Retrieve the Car struct using the indicated vin
          *   1a) Throw exception if vin does NOT map to a Car struct
          *  2) Verify that renter indicated a valid cleanliness value
-         *    2a) Throw exception if 1 > cleanliness > 10
+         *   2a) Throw exception if 1 > cleanliness > 10
          *  3) Verify that images contain urls
-         *    3a) Throw exception if any images don't start with http[s]:// (necessary ???)
+         *   3a) Throw exception if any images don't start with http[s]:// (necessary ???)
          *  4) Create new CarFeedback and add to openFeedback mapping
          *  5) Set Car.state = IN_DISPUTE if disputeRental is true
          * 
