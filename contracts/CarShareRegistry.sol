@@ -1,6 +1,6 @@
 contract CarShareRegistry {
     enum CarState {
-        AVAILABLE, UNAVAILABLE, RENTED, IN_DISPUTE
+        AVAILABLE, UNAVAILABLE, RENTED, IN_DISPUTE, IS_DAMAGED
     }
     
     struct Car {
@@ -22,11 +22,24 @@ contract CarShareRegistry {
                            // problems with car
     }
     
+    struct InProgressTransaction {
+        string vin;
+        uint8 costPerHour;
+        uint8 rentalLengthInHours;
+        uint8 totalCost;
+    }
+    
+    struct CompletedTransaction {
+        string vin;
+        address: renter;
+        uint8 totalCost;
+    }
+    
     // vin => Car
     mapping(string => Car) private cars;
     
     // vin => rental_total
-    mapping(string => uint8) private pendingTransactions;
+    mapping(string => InProgessTransaction) private pendingTransactions;
 
     // open CarFeedback reports
     // vin => CarFeedback[]
@@ -52,8 +65,8 @@ contract CarShareRegistry {
          *  5) Set Car.state = RENTED
          *  6) Transfer funds from renter to contract
          *   6a) Throw exception if transfer fails
-         *  7) Add new entry to pendingTransactions mapping using vin and totalCost
-         *  8) return vin 
+         *  7) Create new Transaction instance and add to pendingTransactions
+         *  8) return vin, lat, long
          * 
          **/
     }
@@ -89,7 +102,26 @@ contract CarShareRegistry {
          **/
     }
     
-    function returnCar(string vin) public { /* TODO */ }
+    function returnCar(string vin, uint8 lat, uint8 long,  string[] images) public (bool) {
+        // app get gas level and gps from car (bluetooth)
+        // app checks current gps vs expected and shows error or makes call to end trip
+        // 
+        // transfer money from contract to owner
+        // update Car struct
+        /**
+         * We have a few things to do here:
+         * 
+         *  1) Retrieve the Car struct using the indicated vin
+         *   1a) Throw exception if vin does NOT map to a Car struct
+         *  2) Verify that Car is rented
+         *   2a) Throw exception if Car's state != CarState.RENTED
+         *  3) Verify that Car is rented to message sender
+         *   3a) Throw exception if msg.sender != Car.renter
+         *  x) Transfer funds from contract to owner
+         *   xa) Throw exception if transfer fails
+         * 
+         **/
+    }
     
     /**
      * Details irrelevant for chosen use cases
