@@ -8,6 +8,8 @@ contract CarShareRegistry {
         address owner;
         address renter;
         uint8 costPerHour;
+        uint8 lat;
+        uint8 long;
         CarState state;
     }
     
