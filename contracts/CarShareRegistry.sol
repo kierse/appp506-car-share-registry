@@ -5,12 +5,25 @@ contract CarShareRegistry {
     
     struct Car {
         string vin;
+        string ownerPubKey;
         address owner;
         address renter;
         uint8 costPerHour;
         uint8 lat;
         uint8 long;
+        string bluetoothName;
+        unit8 bluetoothPin;
         CarState state;
+    }
+
+    struct Booking {
+        string vin;
+        uint8 lat;
+        uint8 long;
+        string bluetoothName;
+        unit8 bluetoothPin;
+        string unlockCode;
+        string ownerPublicKey;
     }
     
     struct CarFeedback {
@@ -26,6 +39,7 @@ contract CarShareRegistry {
         uint256 timestamp;
         string vin;
         address renter;
+        string renterContactInfo; // encrypted with owner public key
         bool refundRequested;
         bool carIsDamaged; 
         uint8 cleanliness; // 1 - 10, 1 = terrible, 10 = excellent
@@ -34,10 +48,13 @@ contract CarShareRegistry {
     }
     
     struct InProgressTransaction {
+        address renter;
         string vin;
         uint8 costPerHour;
         uint8 rentalLengthInHours;
         uint8 totalCost;
+        string unlockCode;
+        string renterPublicKey;
     }
     
     struct CompletedTransaction {
@@ -60,12 +77,14 @@ contract CarShareRegistry {
     mapping(string => Dispute) ongoingDisputes;
 
     // register new car
-    function registerCar(string vin, uint8 costPerHour, CarState state) public {
+    function registerCar(
+        string vin, string ownerPubKey, uint8 costPerHour, string bluetoothName, string bluetoothPin, CarState state
+    ) public {
         // Use msg.sender and given arguments to create a new Car struct.
         // Add new car to cars mapping
     }
     
-    function bookCar(string vin, uint8 rentalLengthInHours) public payable (string) {
+    function bookCar(string vin, uint8 rentalLengthInHours, string renterPublicKey) public payable (string, unint8, unint8, string) {
         /**
          * We have a few things to do here:
          * 
@@ -79,8 +98,9 @@ contract CarShareRegistry {
          *  5) Set Car.state = RENTED
          *  6) Transfer funds from renter to contract
          *   6a) Throw exception if transfer fails
-         *  7) Create new Transaction instance and add to pendingTransactions
-         *  8) return (vin, lat, long)
+         *  7) Generate random unlock code
+         *  8) Create new InProgressTransaction instance and add to pendingTransactions
+         *  9) return Booking(vin, lat, long, bluetoothName, bluetoothPin, unlockCode, ownerPubKey)
          * 
          **/
     }
@@ -126,7 +146,7 @@ contract CarShareRegistry {
          **/
     }
     
-    function unlockCar(string vin, address renter) public (bool) {
+    function unlockCar(string vin, address renter, string signedUnlockCode) public (bool) {
         /**
          * This method is called by the Car
          * 
@@ -136,7 +156,8 @@ contract CarShareRegistry {
          *   2a) Throw exception if Car.state != CarState.RENTED
          *  3) Verify that the indicated renter has rented the Car
          *   3a) Return false if the renter has not rented the Car
-         *  4) return true
+         *  4) Verify unlockCode was signed with the renters private key
+         *  5) return true
          * 
          **/
     }
@@ -157,16 +178,4 @@ contract CarShareRegistry {
          * 
          **/
     }
-    
-    /**
-     * Details irrelevant for chosen use cases
-    
-     * contract owner
-    address owner;
-    
-     * constructor
-    function CarShareRegistry() { owner = msg.sender; }
-    
-    function cancelRental(string vin) { ... }
-    **/
 }
