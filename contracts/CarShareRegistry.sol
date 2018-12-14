@@ -12,7 +12,7 @@ contract CarShareRegistry {
         uint8 lat;
         uint8 long;
         string bluetoothName;
-        unit8 bluetoothPin;
+        uint8 bluetoothPin;
         CarState state;
     }
 
@@ -59,7 +59,7 @@ contract CarShareRegistry {
     
     struct CompletedTransaction {
         string vin;
-        address: renter;
+        address renter;
         uint8 totalCost;
     }
     
@@ -84,7 +84,7 @@ contract CarShareRegistry {
         // Add new car to cars mapping
     }
     
-    function bookCar(string vin, uint8 rentalLengthInHours, string renterPublicKey) public payable (string, unint8, unint8, string) {
+    function bookCar(string vin, uint8 rentalLengthInHours, string renterPublicKey) public payable (Booking) {
         /**
          * We have a few things to do here:
          * 
@@ -162,7 +162,7 @@ contract CarShareRegistry {
          **/
     }
     
-    function returnCar(string vin, uint8 lat, uint8 long,  string[] images) public (bool) {
+    function returnCar(string vin, uint8 lat, uint8 long,  string[] images) public payable (bool) {
         /**
          * We have a few things to do here:
          * 
